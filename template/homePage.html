@@ -1,0 +1,106 @@
+<html>
+   <title>Env Monitor</title>
+
+   <body>      
+         <h1>Welcome to startpage for setting up your device:</h1>
+
+         <form action="http://localhost:5500/homePage" method="post">
+
+            <!-- Input for device name -->
+            <label for="deviceName_Input">Input device name: </label>
+            <input type="text" name="deviceName_Input" id="deviceName_Input"><br><br>
+
+            <!-- Checkbox for temperature -->
+            <input type="checkbox" id="temperature_chkBox" name="temperature_chkBox" 
+               onclick="checkboxAction('temperature_chkBox', 'temperature_inputs')" 
+               {{'checked="checked"' if isCheckedList[0] else ""}}>
+            <label for="temperature_chkBox"> Temperature &emsp;&emsp;&emsp;&emsp;</label>
+
+            <!-- Checkbox for humidity -->
+            <input type="checkbox" id="humidity_chkBox" name="humidity_chkBox" 
+               onclick="checkboxAction('humidity_chkBox', 'humidity_inputs')"
+               {{'checked="checked"' if isCheckedList[1] else ""}}>
+            <label for="humidity_chkBox"> Humidity &emsp;&emsp;&emsp;&emsp;</label><br><br>
+
+            <!-- Checkbox for light -->
+            <input type="checkbox" id="light_chkBox" name="light_chkBox" 
+               onclick="checkboxAction('light_chkBox', 'light_inputs')"
+               {{'checked="checked"' if isCheckedList[2] else ""}}>
+            <label for="light_chkBox"> Light &emsp;&emsp;&emsp;&emsp;</label><br><br><br>
+
+            
+
+            <h2>Advanced sensor settings</h2>
+            <!-- Advanced input for temperature -->
+            <div name="temperature_inputs" id="temperature_inputs" hidden="hidden">
+               <fieldset class="fieldset-auto-width">
+                  <legend>Temperature:</legend>
+                  <label for="temperature_readInterval_input">Sensor read interval[Sec]:&emsp;</label>
+                  <input type="text" name="temperature_readInterval_input" id="temperature_readInterval_input" value="{{readInterval[0]}}"><br><br>
+
+                  <label for="temperature_updateDbInterval_input">Update DB interval[Sec]: &emsp;</label>
+                  <input type="text" name="temperature_updateDbInterval_input" id="temperature_updateDbInterval_input" value="{{updateInterval[0]}}"><br><br>
+               </fieldset>
+            </div>
+
+            <!-- Advanced input for humidity -->
+            <div name="humidity_inputs" id="humidity_inputs" hidden="hidden">
+               <fieldset class="fieldset-auto-width">
+                  <legend>Humidity:</legend>
+                  <label for="humidity_readInterval_input">Sensor read interval[Sec]:&emsp;</label>
+                  <input type="text" name="humidity_readInterval_input" id="humidity_readInterval_input" value="{{readInterval[1]}}"><br><br>
+
+                  <label for="humidity_updateDbInterval_input">Update DB interval[Sec]: &emsp;</label>
+                  <input type="text" name="humidity_updateDbInterval_input" id="humidity_updateDbInterval_input" value="{{updateInterval[1]}}"><br><br>
+               </fieldset>
+            </div>
+
+            <!-- Advanced input for light -->
+            <div name="light_inputs" id="light_inputs" hidden="hidden">
+               <fieldset class="fieldset-auto-width">
+                  <legend>Light:</legend>
+                  <label for="light_readInterval_input" id="light_readInterval_lable">Sensor read interval[Sec]:&emsp;</label>
+                  <input type="text" name="light_readInterval_input" id="light_readInterval_input" value="{{readInterval[2]}}"><br><br>
+
+                  <label for="light_updateDbInterval_input" id="light_updateDbInterval_lable">Update DB interval[Sec]: &emsp;</label>
+                  <input type="text" name="light_updateDbInterval_input" id="light_updateDbInterval_input" value="{{updateInterval[2]}}"><br><br>
+               </fieldset>
+            </div>
+
+            <!-- Button 'Next' -->
+            <br>
+            <label for="homePage_Next_Btn"> &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</label>
+            <button type="submit" name="homePage_Next_Btn">Next</button>
+         </form>
+
+         <!-- Styles -->
+         <style type="text/css">
+            .fieldset-auto-width {
+                 display: inline-block;
+            }
+         </style>
+
+         <!-- Scripts -->
+         <script>
+            window.onload = function() {
+               checkboxAction('temperature_chkBox', 'temperature_inputs')
+               checkboxAction('humidity_chkBox', 'humidity_inputs')
+               checkboxAction('light_chkBox', 'light_inputs')
+            };
+
+            function checkboxAction(checkboxID, elementID) {
+               var checkBox = document.getElementById(checkboxID);
+               var element = document.getElementById(elementID);
+
+               if (checkBox.checked != true){
+                  element.hidden = "hidden";
+               } else {
+                  element.hidden = "";
+               }
+            }
+         </script>
+
+         <!-- <button onclick="document.location='wifiSetupPage'">Skip</button> -->
+
+   </body>
+</html>
