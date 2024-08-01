@@ -1,7 +1,7 @@
 # Environment Monitoring System
 
 ### *Objective*
-The objective of the repository is twofold: 1) To create a small formfactor data collection device, that gathers data about the environment (temperature, humidity, light intensity, Co2, etc). The device has to be easily configurable and able to run a database, in which all device related and sensor data is stored. 2) To create a website application from which multiple devices can be add and their data viewed. The must have features such as login for different users, graphing of the data delivered by the associated data collection devices. 
+The objective of the repository is twofold: 1) To create a small formfactor data collection device, that gathers data about the environment (temperature, humidity, light intensity, Co2, etc). The device has to be easily configurable and able to run a database, in which all device related and sensor data is stored. 2) To create a website application from which multiple devices can be add and their data viewed. There must be features such as login for different users, graphing of the data delivered by the associated data collection devices. 
 
 
 ### *Hardware*
