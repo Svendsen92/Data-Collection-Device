@@ -1,13 +1,20 @@
 # Environment Monitoring System
 
 ### *Objective*
-The objective of the repository is twofold: 1) To create a small formfactor data collection device, that gathers data about the environment (temperature, humidity, light intensity, Co2, etc). The device has to be easily configurable and able to run a database, in which all device related and sensor data is stored. 2) To create a website application from which multiple devices can be add and their data viewed. There must be features such as login for different users, graphing of the data delivered by the associated data collection devices. 
+This repository contains sensory part of a larger project which aims to develop a small formfactor data collection device, that gathers data about the environment (temperature, humidity, light intensity, Co2, etc). The other part of the project is to create a web application, which allows multiple data collection devices to be add and their data viewed. 
+
+The data collection device must be easily configurable and able to run a database, in which all device related and sensor data is stored.
 
 
-### *Hardware*
+### *Specifications*
+#### Hardware
 The small formfactor data collection device used is a Raspberry Pi3.
   - Temperature & Humidity Sensor --> DHT11
   - Light Intensity Sensor --> Photosensitive Resistance LDR
+
+#### Software
+- The device is configurable through a web server, which is build using the Flask framework.
+- The database used is MariaDB, as it works well with an raspberry Pi.
 
 
 ### *How to get it running*
