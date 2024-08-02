@@ -1,0 +1,22 @@
+<html> 
+    <title>Env Monitor</title>
+
+    <body name="wifi_Select", id="wifi_Select">    
+        <h1>Wifi Setup</h1>
+        <p>Please select your wifi network from the dropdown menu</p>
+ 
+        <form action = "http://localhost:5500/wifiSetupPage" method = "post">
+
+            <select name="dropdown_SSID">
+                {% for ssid in ssids_list %}
+                    <option value="{{ssid}}">{{ssid}}</option>
+                {% endfor %}
+            </select>
+            <p><input type = "password" name="password" placeholder="Enter password" /></p>
+        
+            <button type="submit" name="connectRequest">Connect</button>
+            <button onclick="document.location='homePage'">Goto homePage</button>
+
+        </form>
+    </body>
+</html>  
