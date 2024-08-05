@@ -1,4 +1,4 @@
-# Environment Monitoring System
+# Data Collection Device
 
 ### *Objective*
 This repository contains sensory part of a larger project which aims to develop a small formfactor data collection device, that gathers data about the environment (temperature, humidity, light intensity, Co2, etc). The other part of the project is to create a web application, which allows multiple data collection devices to be add and their data viewed. 
@@ -37,17 +37,10 @@ In progress
 
 
 ### *To be done*
-
-- Webapplication:
-  * Make page for adding/removing data collection devices.
-      - Make function to search for data collection devices to be added
-      - Make function to add/remove read and write privileges to the webapplication from the collection device. 
-  * Make page that displays graphs of the data from a data collection device.
-
-- Raspberry Pi:
-  * Make a function to connect to a wifi network using SSID & Password.
-  * Make webinterface prettier.
+* Make a functionality that connects device to user-account to facilitate database read/write privileges.
+* Make a function to connect to a wifi network using SSID & Password.
+* Make web-interface prettier.
 
 
 ### *License* 
-
+TBD
