@@ -86,7 +86,7 @@ def defaultPage():
 def homePage():
 
     # list that contains the different sensor types
-    sensorTypeList : list = const.sensorType
+    sensorTypeList : list = const.sensorTypeList
 
     if 'homePage_Next_Btn' in request.form:
         deviceName = request.form['deviceName_Input']
@@ -94,26 +94,26 @@ def homePage():
             db.insert(tableName=const.webTablename, header=["deviceName"], values=(deviceName))
 
         # Update sensor setting or insert them if not already created 
-        for i in range(0, len(sensorTypeList)):
-            
+        #for i in range(0, len(sensorTypeList)):
+        for sensorType in sensorTypeList: 
             # Detect if the checkbox for each sensor is checked
             is_checked = False
             try:
-                is_checked = bool(request.form[sensorTypeList[i] + '_chkBox'])
+                is_checked = bool(request.form[sensorType + '_chkBox'])
             except Exception as error:
                 pass
             # Update the sensor table with the 'is_active' according to the checkbox result, or insert it if not already created
-            if not db.update(tableName=const.sensorTableName, header=["is_active"], values=(is_checked), condition=f"sensorType = '{sensorTypeList[i]}'"):
+            if not db.update(tableName=const.sensorTableName, header=["is_active"], values=(is_checked), condition=f"sensorType = '{sensorType}'"):
                 db.insert(tableName=const.sensorTableName, header=["is_active"], values=(is_checked))
 
             # Update the sensor table with the 'readInterval' according to the 'specified Sensor'_readInterval_input result, or insert it if not already created
-            readInterval = request.form[sensorTypeList[i] + '_readInterval_input']
-            if not db.update(tableName=const.sensorTableName, header=["readInterval"], values=(readInterval), condition=f"sensorType = '{sensorTypeList[i]}'"):
+            readInterval = request.form[sensorType + '_readInterval_input']
+            if not db.update(tableName=const.sensorTableName, header=["readInterval"], values=(readInterval), condition=f"sensorType = '{sensorType}'"):
                 db.insert(tableName=const.sensorTableName, header=["readInterval"], values=(readInterval))
             
             # Update the sensor table with the 'updateInterval' according to the 'specified Sensor'_updateDbInterval_input result, or insert it if not already created
-            updateInterval = request.form[sensorTypeList[i] + '_updateDbInterval_input']
-            if not db.update(tableName=const.sensorTableName, header=["updateInterval"], values=(updateInterval), condition=f"sensorType = '{sensorTypeList[i]}'"):
+            updateInterval = request.form[sensorType + '_updateDbInterval_input']
+            if not db.update(tableName=const.sensorTableName, header=["updateInterval"], values=(updateInterval), condition=f"sensorType = '{sensorType}'"):
                 db.insert(tableName=const.sensorTableName, header=["updateInterval"], values=(updateInterval))
 
         return redirect(url_for('wifiSetupPage'))
@@ -123,18 +123,19 @@ def homePage():
         readInterval: list = []
         updateInterval: list = []
 
-        for i in range(0, len(sensorTypeList)):
-            isCheckedList.append(db.select(tableName=const.sensorTableName,  header="is_active", condition=f"sensorType = '{sensorTypeList[i]}'"))
+        #for i in range(0, len(sensorTypeList)):
+        for sensorType in sensorTypeList:
+            isCheckedList.append(db.select(tableName=const.sensorTableName,  header="is_active", condition=f"sensorType = '{sensorType}'"))
             if isCheckedList[len(isCheckedList) -1] != None:
-                isCheckedList[len(isCheckedList) -1] = db.select(tableName=const.sensorTableName,  header="is_active", condition=f"sensorType = '{sensorTypeList[i]}'")[0][0]
+                isCheckedList[len(isCheckedList) -1] = db.select(tableName=const.sensorTableName,  header="is_active", condition=f"sensorType = '{sensorType}'")[0][0]
             
-            readInterval.append(db.select(tableName=const.sensorTableName,  header="readInterval", condition=f"sensorType = '{sensorTypeList[i]}'"))
+            readInterval.append(db.select(tableName=const.sensorTableName,  header="readInterval", condition=f"sensorType = '{sensorType}'"))
             if readInterval[len(readInterval) -1] != None:
-                readInterval[len(readInterval) -1] = db.select(tableName=const.sensorTableName,  header="readInterval", condition=f"sensorType = '{sensorTypeList[i]}'")[0][0]
+                readInterval[len(readInterval) -1] = db.select(tableName=const.sensorTableName,  header="readInterval", condition=f"sensorType = '{sensorType}'")[0][0]
 
-            updateInterval.append(db.select(tableName=const.sensorTableName,  header="updateInterval", condition=f"sensorType = '{sensorTypeList[i]}'"))
+            updateInterval.append(db.select(tableName=const.sensorTableName,  header="updateInterval", condition=f"sensorType = '{sensorType}'"))
             if updateInterval[len(updateInterval) -1] != None:
-                updateInterval[len(updateInterval) -1] = db.select(tableName=const.sensorTableName,  header="updateInterval", condition=f"sensorType = '{sensorTypeList[i]}'")[0][0]
+                updateInterval[len(updateInterval) -1] = db.select(tableName=const.sensorTableName,  header="updateInterval", condition=f"sensorType = '{sensorType}'")[0][0]
 
         return render_template('homePage.html', isCheckedList=isCheckedList, readInterval=readInterval, updateInterval=updateInterval)
     
@@ -176,10 +177,10 @@ if __name__ =="__main__":
     # Create database if it does not already exist
     db.createDatabase(const.database)
 
-    # Create table if it does not already exist
+    # Create webInterface_table, if it does not already exist
     ColumnNames = {"deviceIP": "VARCHAR(15)", "deviceName": "VARCHAR(75)", "timeStamp": "DATETIME"}
     if db.createTable(tableName=const.webTablename, columnHeaders=ColumnNames):
-        header = "deviceIP, deviceName, timeStamp"
+        header = ["deviceIP", "deviceName", "timeStamp"]
         timeStamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         values: tuple = (get_myLocal_ip(), "RPi1", timeStamp)
@@ -187,13 +188,13 @@ if __name__ =="__main__":
         print(f"Insert status: {status}")
 
 
-    # Create table if it does not already exist
+    # Create sensor_table, if it does not already exist
     ColumnNames = {"sensorType": "VARCHAR(20)", "is_active": "BOOL", "updateInterval": "INT", "readInterval": "INT", "timeStamp": "DATETIME"}
     if db.createTable(tableName=const.sensorTableName, columnHeaders=ColumnNames):
-        header = "sensorType, readInterval, updateInterval, timeStamp"
+        header = ["sensorType", "is_active", "readInterval", "updateInterval", "timeStamp"]
         timeStamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-        values: tuple = (("temperature", 10, 1800, timeStamp), ("humidity", 10, 1800, timeStamp), ("light", 10, 1800, timeStamp))
+        values: tuple = (("temperature", False, 10, 1800, timeStamp), ("humidity", False, 10, 1800, timeStamp), ("light", False, 10, 1800, timeStamp))
         for valueSet in values:
             print(valueSet)
             status = db.insert(tableName=const.sensorTableName, header=header, values=valueSet)
