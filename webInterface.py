@@ -6,6 +6,7 @@ from datetime import datetime
 from deviceLibrary.mySQL_DatabaseLib import mySQL_DatabaseLib # type: ignore
 from deviceLibrary.myConstants import myConstants as const # type: ignore
 from flask import Flask, render_template, redirect, url_for, request # type: ignore
+from flask_socketio import SocketIO # type: ignore
 
 
 # Determine the operating system of this device
@@ -75,6 +76,30 @@ def connectToWifi(ssid: str, password: str) -> bool:
 ##########################################
 #### Web Application code starts here ####
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+@socketio.on('getChartData')
+def updateChart(json: dict):
+    print("socketio -> getChartData()")
+    print("generateChart_btn Pressed")
+
+    sensorType = json['sensorType']
+    interval = json['interval']
+
+    data = db.select(tableName=const.dataTableName,  header="value, timeStamp", condition=f"inputType = '{sensorType}'")
+
+    values = [index[0] for index in data]
+    labels = [str(index[1]) for index in data]
+    data = {'labels': labels, 'values': values}
+       
+    socketio.emit('updateChart', data)
+
+
+@socketio.on('connected')
+def handle_my_custom_event(data: str):
+    print(data)
+
 
 @app.route("/")
 def defaultPage():
@@ -90,8 +115,8 @@ def homePage():
 
     if 'homePage_Next_Btn' in request.form:
         deviceName = request.form['deviceName_Input']
-        if not db.update(tableName=const.webTablename, header=["deviceName"], values=(deviceName), condition="PK = 1"):
-            db.insert(tableName=const.webTablename, header=["deviceName"], values=(deviceName))
+        if not db.update(tableName=const.webTableName, header=["deviceName"], values=(deviceName), condition="PK = 1"):
+            db.insert(tableName=const.webTableName, header=["deviceName"], values=(deviceName))
 
         # Update sensor setting or insert them if not already created 
         #for i in range(0, len(sensorTypeList)):
@@ -141,7 +166,14 @@ def homePage():
     
 
 
-@app.route('/wifiSetupPage', methods=['POST'])
+@app.route('/graphPage', methods=['POST', 'GET'])
+def graphPage():
+    print("GraphPage")
+
+    return render_template('graphPage.html', labels=[], values=[], sensorTypeList=const.sensorTypeList)
+
+
+@app.route('/wifiSetupPage', methods=['POST', 'GET'])
 def wifiSetupPage():
     print("wifiSetupPage")
 
@@ -179,12 +211,12 @@ if __name__ =="__main__":
 
     # Create webInterface_table, if it does not already exist
     ColumnNames = {"deviceIP": "VARCHAR(15)", "deviceName": "VARCHAR(75)", "timeStamp": "DATETIME"}
-    if db.createTable(tableName=const.webTablename, columnHeaders=ColumnNames):
+    if db.createTable(tableName=const.webTableName, columnHeaders=ColumnNames):
         header = ["deviceIP", "deviceName", "timeStamp"]
         timeStamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         values: tuple = (get_myLocal_ip(), "RPi1", timeStamp)
-        status = db.insert(tableName=const.webTablename, header=header, values=values)
+        status = db.insert(tableName=const.webTableName, header=header, values=values)
         print(f"Insert status: {status}")
 
 
@@ -201,5 +233,6 @@ if __name__ =="__main__":
             print(f"Insert status: {status}")
 
 
-    app.run("127.0.0.1", 5500)
+    socketio.run(app, "127.0.0.1", 5500)
+    #app.run("127.0.0.1", 5500)
     
