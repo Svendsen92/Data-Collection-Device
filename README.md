@@ -24,11 +24,6 @@ The Libraries required to be installed on the Raspberry Pi:
 3. sudo pip install mysql-connector-python --> (Used for interaction with mySQL database)
 4. Used to install mariaDB on linux --> [tutorial link](https://raspberrytips.com/install-mariadb-raspberry-pi/)
 
-
-The Libraries required to be installed on the computer:
-1. TBD
-2. TBD
-
 <br>
 Now the libraries & programs needed should be ready.
 
