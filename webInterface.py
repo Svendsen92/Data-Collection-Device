@@ -223,9 +223,9 @@ def wifiSetupPage():
         ssid = request.form['dropdown_SSID']
         password = request.form['password']
         is_connected = connectToWifi(ssid=ssid, password=password)
-        logger.info(f"Connecting to WIFI status msg: {is_connected['status']}")
+        logger.info(f"Connecting to WIFI status msg: {is_connected['result']}")
 
-        if is_connected['status']:
+        if is_connected['result']:
             print("Success")
         else:
             print("failure")
@@ -247,7 +247,7 @@ if __name__ =="__main__":
     ColumnNames = {"deviceIP": "VARCHAR(15)", "deviceName": "VARCHAR(75)", "timeStamp": "DATETIME"}
     result = db.createTable(tableName=const.webTableName, columnHeaders=ColumnNames)
     logger.info(f"INFO : {result['message']}")
-    if result['status']:
+    if result['result']:
         header = ["deviceIP", "deviceName", "timeStamp"]
         timeStamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         values: tuple = (get_myLocal_ip(), "RPi1", timeStamp)
@@ -259,7 +259,7 @@ if __name__ =="__main__":
     ColumnNames = {"sensorType": "VARCHAR(20)", "is_active": "BOOL", "updateInterval": "INT", "readInterval": "INT", "timeStamp": "DATETIME"}
     result = db.createTable(tableName=const.sensorTableName, columnHeaders=ColumnNames)
     logger.info(f"INFO : {result['message']}")
-    if result['status']:
+    if result['result']:
         header = ["sensorType", "is_active", "readInterval", "updateInterval", "timeStamp"]
         timeStamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 

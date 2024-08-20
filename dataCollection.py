@@ -247,7 +247,7 @@ if __name__ =="__main__":
     ColumnNames = {"deviceIP": "VARCHAR(15)", "deviceName": "VARCHAR(75)", "timeStamp": "DATETIME"}
     result = db.createTable(tableName=const.webTableName, columnHeaders=ColumnNames)
     logger.info(f"INFO : {result['message']}")
-    if result['status']:
+    if result['result']:
         header = ["deviceIP", "deviceName", "timeStamp"]
         timeStamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         values: tuple = (get_myLocal_ip(), "RPi1", timeStamp)
@@ -259,7 +259,7 @@ if __name__ =="__main__":
     ColumnNames = {"sensorType": "VARCHAR(20)", "is_active": "BOOL", "updateInterval": "INT", "readInterval": "INT", "timeStamp": "DATETIME"}
     result = db.createTable(tableName=const.sensorTableName, columnHeaders=ColumnNames)
     logger.info(f"INFO : {result['message']}")
-    if result['status']:
+    if result['result']:
         header = ["sensorType", "is_active", "readInterval", "updateInterval", "timeStamp"]
         timeStamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         values: tuple = (("temperature", False, 10, 1800, timeStamp), ("humidity", False, 10, 1800, timeStamp), ("light", False, 10, 1800, timeStamp))
