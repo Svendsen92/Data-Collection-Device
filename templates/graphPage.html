@@ -12,6 +12,7 @@
         <form action = "http://localhost:5500/graphPage" method = "post">
 
             <!-- Sensor type dropdown menu selection -->
+            <label for="dropdown_sensorTypeList"> Sensor: </label>
             <select name="dropdown_sensorTypeList" id="dropdown_sensorTypeList">
                 {% for sensorType in sensorTypeList %}
                     <option value="{{sensorType}}">{{sensorType}}</option>
@@ -19,16 +20,29 @@
             </select>
 
             <!-- Data span Interval dropdown menu selection -->
+            <label for="dropdown_dataInterval"> || Interval: </label>
             <select name="dropdown_dataInterval" id="dropdown_dataInterval">
-                <option value="15min">15min</option>
-                <option value="1hour">1hour</option>
-                <option value="2hour">2hour</option>
-                <option value="3hour">3hour</option>
-                <option value="5hour">5hour</option>
-                <option value="12hour">12hour</option>
-                <option value="1day">1day</option>
-                <option value="2day">2day</option>
+                <option value='{"value":15, "unit":"minutes"}'>15min</option>
+                <option value='{"value":1, "unit":"hours"}'>1hour</option>
+                <option value='{"value":2, "unit":"hours"}'>2hour</option>
+                <option value='{"value":3, "unit":"hours"}'>3hour</option>
+                <option value='{"value":6, "unit":"hours"}'>6hour</option>
+                <option value='{"value":12, "unit":"hours"}'>12hour</option>
+                <option value='{"value":18, "unit":"hours"}'>18hour</option>
+                <option value='{"value":1, "unit":"days"}'>1day</option>
+                <option value='{"value":2, "unit":"days"}'>2day</option>
+                <option value='{"value":3, "unit":"days"}'>3day</option>
+                <option value='{"value":4, "unit":"days"}'>4day</option>
+                <option value='{"value":5, "unit":"days"}'>5day</option>
+                <option value='{"value":6, "unit":"days"}'>6day</option>
+                <option value='{"value":1, "unit":"weeks"}'>1week</option>
+                <option value='{"value":2, "unit":"weeks"}'>2week</option>
+                <option value='{"value":3, "unit":"weeks"}'>3week</option>
             </select>
+
+            <!-- Add/remove data line-->
+            <label for="dropdown_dataInterval"> || Add: </label>
+            <input type="checkbox" id="add_Remove_dataline" name="add_Remove_dataline">
             <br><br>
 
             <!--Canvas the contain the chart-->
@@ -48,22 +62,14 @@
 
             // SocketIO
             const socket = io();
-            socket.on('connect', function() {
-                console.log('I\'m connected!');
-                //socket.emit('connected', {data: 'I\'m connected!'});
-                socket.emit('connected', 'I\'m connected!');
-            });
-
             socket.on("updateChart", function(data){
                 console.log(data);
-                console.log(data['labels']);
-                console.log(data['values']);
-
                 var e = document.getElementById("dropdown_sensorTypeList");
                 var sensorType = e.options[e.selectedIndex].text;
                 updateGraph("chart", data['labels'], data['values'], sensorType);
             })
 
+            
             // Functions
             function generateChart_btn_pressed(){
                 var e = document.getElementById("dropdown_sensorTypeList");
@@ -71,7 +77,7 @@
                 console.log(sensorType);
 
                 var d = document.getElementById("dropdown_dataInterval");
-                var interval = d.options[d.selectedIndex].text;
+                var interval = d.options[d.selectedIndex].value;
                 console.log(interval);
 
                 socket.emit('getChartData', {'sensorType': sensorType, 'interval':interval});
@@ -87,7 +93,7 @@
                             label: chartLabel,
                             borderColor: "rgba(0,0,255,0.1)",
                             data: yValues,
-                            lineTension: 0.1
+                            lineTension: 0.2
                         }]
                     },
                     options: {
