@@ -9,8 +9,7 @@ class mySQL_DatabaseLib:
         self._database = database
 
 
-
-    def createDatabase(self, databaseName: str):
+    def createDatabase(self, databaseName: str) -> dict:
         mydb = mysql.connector.connect(
             host=self._host,
             user=self._user,
@@ -20,21 +19,18 @@ class mySQL_DatabaseLib:
         try:
             mycursor = mydb.cursor()
             mycursor.execute(f"CREATE DATABASE {databaseName}")
-            print(f"Database<{databaseName}> has been created")
-            return True
+            return {'result':True,'message':f"Database<{databaseName}> has been created"}
         except Exception as error:
-            print(error)
-            return False
+            return {'result':False,'message':error}
 
 
-    def createTable(self, tableName: str, columnHeaders: dict):
+    def createTable(self, tableName: str, columnHeaders: dict) -> dict:
         mydb = mysql.connector.connect(
             host=self._host,
             user=self._user,
             password=self._password,
             database=self._database
         )
-
 
         sql_headerString = ""
         for header in columnHeaders:
@@ -47,11 +43,9 @@ class mySQL_DatabaseLib:
         mycursor = mydb.cursor()
         try:
             mycursor.execute(f"CREATE TABLE {tableName} (PK INT AUTO_INCREMENT NOT NULL, {res}, PRIMARY KEY (PK))")
-            print(f"Table<{tableName}> has been created")
-            return True
+            return {'result':True,'message':f"Table<{tableName}> has been created"}
         except Exception as error:
-            print(error)
-            return False
+            return {'result':False,'message':error}
 
 
     def showDatabases(self):
@@ -69,7 +63,7 @@ class mySQL_DatabaseLib:
 
 
     """Inserts one or more data entries in a specified table"""
-    def insert(self, tableName: str, header: list[str], values: tuple) -> bool:
+    def insert(self, tableName: str, header: list[str], values: tuple) -> dict:
         mydb = mysql.connector.connect(
             host=self._host,
             user=self._user,
@@ -100,15 +94,13 @@ class mySQL_DatabaseLib:
         try:
             mycursor.execute(sql, tmp_tuple)
             mydb.commit()
-            return True
+            return {'result':True,'message':f"Insert in Table<{tableName}> successfull"}
         except Exception as error:
-            print(f"{error}: mySQL_DatabaseLib.insert()")
-            return False
+            return {'result':False,'message':error}
 
 
     """Update one or more data entries in a specified table, based on the condition statement"""
-    def update(self, tableName: str, header: list[str], values: tuple, condition: str) -> bool:
-
+    def update(self, tableName: str, header: list[str], values: tuple, condition: str) -> dict:
         mydb = mysql.connector.connect(
             host=self._host,
             user=self._user,
@@ -125,14 +117,12 @@ class mySQL_DatabaseLib:
                 try:
                     valueStr =  str(float(values[i]))
                 except ValueError: # if it is not an INT or FLOAT
-                    print(f"{ValueError}: mySQL_DatabaseLib.update(1) : header = {header}, values = {values}")
                     valueStr = "'" + str(values[i]) + "'" 
                 updatePair += header[i] + " = " + valueStr + ", "
         else:
             try:
                 valueStr =  str(float(values))
             except ValueError: # if it is not an INT or FLOAT
-                print(f"{ValueError}: mySQL_DatabaseLib.update(2) : header = {header}, values = {values}")
                 valueStr = "'" + str(values) + "'" 
             updatePair += header[0] + " = " + valueStr + ", "
 
@@ -142,10 +132,9 @@ class mySQL_DatabaseLib:
         try:
             mycursor.execute(sql)
             mydb.commit()
-            return True
+            return {'result': True, 'message': f"Update in Table<{tableName}> successfull"}
         except Exception as error:
-            print(f"{error}: mySQL_DatabaseLib.update(3)")
-            return False
+            return {'result': False, 'message': error}
         
 
     """Retrives one or more date entries in the specified table, based on the condition statement"""
@@ -160,21 +149,24 @@ class mySQL_DatabaseLib:
             
         mycursor = mydb.cursor()
 
+        query: str = ""
         try:
             if condition == None:
-                mycursor.execute(f"SELECT {header} FROM {tableName}")
+                query = f"SELECT {header} FROM {tableName}"
+                #mycursor.execute(f"SELECT {header} FROM {tableName}")
             else:
-                mycursor.execute(f"SELECT {header} FROM {tableName} WHERE {condition}")
+                query = f"SELECT {header} FROM {tableName} WHERE {condition}"
+                #mycursor.execute(f"SELECT {header} FROM {tableName} WHERE {condition}")
 
+            mycursor.execute(query)
             result = mycursor.fetchall()
             if len(result) > 0:
-                return result
+                return {'result': result, 'message': 'Query successfull'}
             else:
-                return None
-            
+                return {'result': None, 'message': f"No results from query <{query}>"}
         except Exception as error:
             print(error)
-            return None
+            return {'result': None, 'message': error}
 
         
     
